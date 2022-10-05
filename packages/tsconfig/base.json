@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "version": "4.6.4",
+  "compilerOptions": {
+    "lib": ["es6"],
+    "module": "commonjs",
+    "target": "esnext",
+    "outDir": "./dist",
+
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    "extendedDiagnostics": true,
+    "listFiles": false,
+    "preserveWatchOutput": true,
+  
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  }
+}

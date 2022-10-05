@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fetchact
+  namespace: hnu
+spec:
+  selector:
+    matchLabels:
+      app: fetchact
+  template:
+    metadata:
+      labels:
+        app: fetchact
+    spec:
+      containers:
+      - name: fetchact
+        image: hnu/fetchact:v1.0.0
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "256Mi"
+        #     cpu: "200m"
+        env:
+        - name: GRAPHQL_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: fetchdb-config
+              key: GraphQLEndpoint
+        - name: TASK_QUEUE
+          valueFrom:
+            configMapKeyRef:
+              name: hnu-config
+              key: TaskQueue
+        - name: TEMPORAL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: hnu-config
+              key: TemporalServer

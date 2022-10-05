@@ -1,0 +1,96 @@
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: syncdb
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 100Mi
+  hostPath:
+    path: /data/database/syncdb/
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: syncdb
+  labels:
+    database: sqlite
+    app: syncdb
+  namespace: hnu
+spec:
+  selector:
+    matchLabels:
+      app: syncdb  # has to match .spec.template.metadata.labels
+  serviceName: syncdb
+  replicas: 1 # single instance
+  volumeClaimTemplates:
+  - metadata:
+      name: syncdb
+    spec:
+      accessModes: [ReadWriteOnce]
+      storageClassName: standard
+      resources:
+        requests:
+          cpu: 200m
+          memory: 180Mi
+          storage: 100Mi
+  template:
+    metadata:
+      labels:
+        app: syncdb  # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: syncdb
+        image: hnu/syncdb:v1.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 3456
+        volumeMounts:
+        - name: syncdb
+          mountPath: /var/lib/database/
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncdb
+  labels:
+    app: syncdb
+  namespace: hnu
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 3456
+      protocol: TCP
+    # - name: metrics
+    #   port: 9090
+  selector:
+    app: syncdb
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: syncdb-ingress
+  namespace: hnu
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: syncdb.hnu.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: syncdb
+                port:
+                  number: 8080

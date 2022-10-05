@@ -1,0 +1,9 @@
+{
+  "name": "@tezheng/shared",
+  "version": "1.0.0",
+  "author": "Zheng Te <tezheng1982@gmail.com>",
+  "license": "MIT",
+  "exports": "./index.ts",
+  "types": "./index.ts",
+  "type": "commonjs"
+}

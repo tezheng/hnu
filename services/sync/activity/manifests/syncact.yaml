@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syncact
+  namespace: hnu
+spec:
+  selector:
+    matchLabels:
+      app: syncact
+  template:
+    metadata:
+      labels:
+        app: syncact
+    spec:
+      containers:
+      - name: syncact
+        image: hnu/syncact:v1.0.0
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "256Mi"
+        #     cpu: "200m"
+        env:
+        - name: GRAPHQL_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: syncdb-config
+              key: GraphQLEndpoint
+        - name: TASK_QUEUE
+          valueFrom:
+            configMapKeyRef:
+              name: hnu-config
+              key: TaskQueue
+        - name: TEMPORAL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: hnu-config
+              key: TemporalServer

@@ -1,0 +1,19 @@
+FROM keystonejs6:v2.3.0 as dependencies
+
+FROM node:16-slim as production
+
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=dependencies /app/node_modules node_modules
+COPY src src
+COPY keystone.ts keystone.ts
+
+ENV PATH="${PATH}:/app/node_modules/.bin"
+
+RUN keystone postinstall --fix
+RUN keystone build
+RUN keystone prisma migrate deploy
+
+CMD keystone start

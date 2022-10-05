@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hnu-config
+  namespace: hnu
+data:
+  TemporalServer: temporaltest-frontend.default.svc.cluster.local
+  TaskQueue: hnu4
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syncdb-config
+  namespace: hnu
+data:
+  GraphQLEndpoint: http://syncdb.hnu.test/api/graphql
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fetchdb-config
+  namespace: hnu
+data:
+  GraphQLEndpoint: http://fetchdb.hnu.test/api/graphql

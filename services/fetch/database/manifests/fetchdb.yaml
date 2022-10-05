@@ -1,0 +1,96 @@
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fetchdb
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 100Mi
+  hostPath:
+    path: /data/database/fetchdb/
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fetchdb
+  labels:
+    database: sqlite
+    app: fetchdb
+  namespace: hnu
+spec:
+  selector:
+    matchLabels:
+      app: fetchdb  # has to match .spec.template.metadata.labels
+  serviceName: fetchdb
+  replicas: 1 # single instance
+  volumeClaimTemplates:
+  - metadata:
+      name: fetchdb
+    spec:
+      accessModes: [ReadWriteOnce]
+      storageClassName: standard
+      resources:
+        requests:
+          cpu: 200m
+          memory: 180Mi
+          storage: 100Mi
+  template:
+    metadata:
+      labels:
+        app: fetchdb  # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: fetchdb
+        image: hnu/fetchdb:v1.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 3456
+        volumeMounts:
+        - name: fetchdb
+          mountPath: /var/lib/database/
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fetchdb
+  labels:
+    app: fetchdb
+  namespace: hnu
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 3456
+      protocol: TCP
+    # - name: metrics
+    #   port: 9090
+  selector:
+    app: fetchdb
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fetchdb-ingress
+  namespace: hnu
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: fetchdb.hnu.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fetchdb
+                port:
+                  number: 8080

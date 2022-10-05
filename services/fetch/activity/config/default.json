@@ -1,0 +1,5 @@
+{
+  "TaskQueue": "hnu3",
+  "GraphQLEndpoint": "http://localhost:3457/api/graphql",
+  "TemporalServer": "localhost:7233"
+}

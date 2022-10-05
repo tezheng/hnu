@@ -1,0 +1,15 @@
+FROM node:16-slim
+
+WORKDIR /app
+
+COPY package.json package.json
+COPY yarn.lock yarn.lock
+COPY .yarnrc.yml .yarnrc.yml
+COPY .yarn .yarn 
+
+COPY services services
+COPY packages packages 
+
+RUN yarn workspaces focus @hnu/sync
+
+CMD yarn workspace @hnu/sync start

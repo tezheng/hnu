@@ -1,0 +1,10 @@
+{
+  "extends": "@tezheng/tsconfig/node.json",
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "paths": {
+      "@shared/*": ["shared/*"]
+    }
+  },
+  "include": ["index.ts", "src/**/*.ts", "tests/**/*"]
+}

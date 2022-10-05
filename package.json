@@ -1,0 +1,21 @@
+{
+  "name": "hnu",
+  "version": "1.0.0",
+  "author": "Zheng Te <tezheng1982@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "docker:nodejs": "docker build -f docker/Dockerfile.nodejs $PROJECT_CWD",
+    "docker:keystonejs": "docker build -f docker/Dockerfile.keystonejs6 $INIT_CWD"
+  },
+  "workspaces": [
+    "docs",
+    "apps/**",
+    "packages/**",
+    "services/**"
+  ],
+  "devDependencies": {
+    "turbo": "^1.4.6"
+  },
+  "packageManager": "yarn@3.2.3"
+}

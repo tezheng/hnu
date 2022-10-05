@@ -1,0 +1,8 @@
+{
+  "name": "@tezheng/tsconfig",
+  "version": "1.0.0",
+  "author": "Zheng Te <tezheng1982@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true
+}

@@ -1,0 +1,18 @@
+FROM node:16-slim
+
+WORKDIR /app
+
+COPY package.json package.json
+COPY yarn.lock yarn.lock
+COPY .yarnrc.yml .yarnrc.yml
+COPY .yarn .yarn 
+
+COPY services services
+COPY packages packages 
+
+RUN yarn workspaces focus @hnu/fetch
+
+CMD yarn workspace @hnu/fetch run start
+
+# RUN npm install -g http-server
+# CMD npx http-server 

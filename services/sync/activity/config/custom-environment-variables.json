@@ -1,0 +1,5 @@
+{
+  "TaskQueue": "TASK_QUEUE",
+  "GraphQLEndpoint": "GRAPHQL_ENDPOINT",
+  "TemporalServer": "TEMPORAL_SERVER"
+}
