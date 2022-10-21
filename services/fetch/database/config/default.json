@@ -1,0 +1,9 @@
+{
+  "port": 3457,
+  "db": {
+    "provider": "sqlite",
+    "url": "file:fetch.db",
+    "enableLogging": true,
+    "useMigrations": true
+  }
+}

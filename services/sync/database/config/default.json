@@ -1,0 +1,9 @@
+{
+  "db": {
+    "provider": "sqlite",
+    "url": "file:sync.db",
+    "enableLogging": true,
+    "useMigrations": true
+  },
+  "port": 3456
+}
