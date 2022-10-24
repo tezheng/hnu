@@ -1,3 +1,5 @@
+import { difference } from 'lodash';
+
 import axios from 'axios';
 
 import config from 'config';
@@ -28,13 +30,7 @@ function lower(str: string) {
   return str.charAt(0).toLowerCase() + str.slice(1);
 }
 
-export async function pull(type: StoryType): Promise<number[]> {
-  const storyIDs = await getStoryIDs(type);
-  if (!storyIDs) {
-    console.error(`Failed to fetch ${type}.`);
-    return [];
-  }
-
+export async function oldStories(type: StoryType): Promise<number[]> {
   const key = pluralize(lower(type));
   const ret = await gql(`
     query {
@@ -45,22 +41,47 @@ export async function pull(type: StoryType): Promise<number[]> {
   `)
   .catch((err) => {
     console.error(err);
-    return [];
+    return {};
   });
 
   const batches = ret[key];
-  if (!batches) {
-    throw new Error(`Failed to read last batch from db.`);
+
+  return !batches
+    ? null
+    : batches.length > 0
+      ? batches[0].stories
+      : [];
+}
+
+export async function newStories(type: StoryType) {
+  return getStoryIDs(type);
+}
+
+// return items in the candidates but not in exclution
+export function diff(candidates: number[], exclusion: number[]) {
+  return difference(candidates, exclusion);
+  // return candidates.reduce((acc: number[], item: number) => {
+  //   if (!exclusion.includes(item)) {
+  //     return [...acc, item];
+  //   }
+  //   return acc;
+  // }, []);
+}
+
+export async function pull(type: StoryType): Promise<number[]> {
+  const lastIDs = await oldStories(type)
+  if (!lastIDs) {
+    console.error(`Failed to retrieve ${type} from db.`);
+    return [];
   }
-  const lastIDs = batches.length > 0 ? batches[0].stories : [];
 
-  const diffs = storyIDs.reduce((acc: number[], item: number) => {
-    if (!lastIDs.includes(item)) {
-      return [...acc, item];
-    }
-    return acc;
-  }, []);
+  const storyIDs = await newStories(type);
+  if (!storyIDs) {
+    console.error(`Failed to fetch ${type}.`);
+    return [];
+  }
 
+  const diffs = diff(storyIDs, lastIDs);
   if (diffs.length == 0) {
     console.log('No new item.');
     return [];
@@ -81,5 +102,6 @@ export async function pull(type: StoryType): Promise<number[]> {
   }
 
   console.log(`New items: ${JSON.stringify(diffs)}.`);
+
   return diffs;
 };
