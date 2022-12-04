@@ -25,6 +25,7 @@
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.3",
     "@tezheng/tsconfig": "*",
     "@types/config": "^3.3.0",
     "@types/lodash-es": "^4.17.6",
